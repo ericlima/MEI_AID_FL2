@@ -1,19 +1,16 @@
 package pt.ipcb.ad.aid_pl2.controller;
 
-import jdk.jshell.execution.Util;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import pt.ipcb.ad.aid_pl2.model.Utilizador;
 import pt.ipcb.ad.aid_pl2.service.UtilizadorRepository;
 
-import java.util.List;
 
 @Controller
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST})
 public class UtilizadorController {
 
     private UtilizadorRepository utilizadorRepository;
@@ -33,7 +30,11 @@ public class UtilizadorController {
     }
 
     @PostMapping("/registar")
-    public ModelAndView registar(@ModelAttribute Utilizador utilizador) {
+    public ModelAndView registar(@ModelAttribute Utilizador utilizador, HttpServletResponse httpServletResponse) {
+        if (utilizador == null) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
         utilizadorRepository.save(utilizador);
         ModelAndView modelAndView = new ModelAndView("dados-utilizador"); // Nome do arquivo HTML
         modelAndView.addObject("utilizador", utilizador);
